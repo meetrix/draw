@@ -740,20 +740,20 @@ socket.on('settings', function(settings) {
 });
 
 
-socket.on('draw:progress', function(artist, data,deviseWindowSize) {
+socket.on('draw:progress', function(artist, data,peerDeviseWindowSize) {
 
   // It wasnt this user who created the event
   if (artist !== uid && data) {
-    progress_external_path(JSON.parse(data), artist);
+    progress_external_path(JSON.parse(data), artist,peerDeviseWindowSize);
   }
 
 });
 
-socket.on('draw:end', function(artist, data,deviseWindowSize) {
+socket.on('draw:end', function(artist, data,peerDeviseWindowSize) {
 
   // It wasnt this user who created the event
   if (artist !== uid && data) {
-    end_external_path(JSON.parse(data), artist);
+    end_external_path(JSON.parse(data), artist,peerDeviseWindowSize);
   }
 
 });
@@ -851,14 +851,21 @@ function update_user_count(count) {
 var external_paths = {};
 
 // Ends a path
-var end_external_path = function(points, artist) {
+var end_external_path = function(points, artist,peerDeviseWindowSize) {
 
   var path = external_paths[artist];
 
   if (path) {
 
     // Close the path
-    path.add(new Point(points.end[1], points.end[2]));
+      console.log('points');
+      console.log(points);
+      console.log('devise window size');
+      console.log(deviseWindowSize);
+      console.log('peer devise window size');
+      console.log(peerDeviseWindowSize);
+      var pointRatio = deviseRatioConvertor(peerDeviseWindowSize,points.end[1],points.end[2])
+    path.add(new Point(pointRatio.x, pointRatio.y));
     path.closed = true;
     path.smooth();
     view.draw();
@@ -871,7 +878,7 @@ var end_external_path = function(points, artist) {
 };
 
 // Continues to draw a path in real time
-progress_external_path = function(points, artist) {
+progress_external_path = function(points, artist,peerDeviseWindowSize) {
 
   var path = external_paths[artist];
 
@@ -938,10 +945,9 @@ function saveDrawing(){
 }
 
 function deviseRatioConvertor(peerDeviseWindowSize,x,y){
-
   return {
-    x: x * peerDeviseWindowSize.width/deviseWindowSize.width,
-    y: y * peerDeviseWindowSize.height/deviseWindowSize.height,
+    x: Math.round(x * deviseWindowSize.width/peerDeviseWindowSize.width),
+    y: Math.round(y * deviseWindowSize.height/peerDeviseWindowSize.height),
   }
 
 }
