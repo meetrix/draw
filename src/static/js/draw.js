@@ -2,10 +2,15 @@
 
 tool.minDistance = 10;
 tool.maxDistance = 45;
+var canvas = document.getElementById('myCanvas');
 var deviseWindowSize = {
-    width: window.innerWidth || document.body.clientWidth,
-    height: window.innerHeight || document.body.clientHeight
+    width: canvas.width,
+    height:canvas.height
 }
+// var deviseWindowSize = {
+//     width: window.innerWidth || document.body.clientWidth,
+//     height: window.innerHeight || document.body.clientHeight
+// }
 var room = /.*\/([^?]+)/.exec(window.location.pathname)[1];
 
 function pickColor(color) {
@@ -947,6 +952,7 @@ function saveDrawing(){
 }
 
 function deviseRatioConvertor(peerDeviseWindowSize,x,y){
+
   return {
     x: Math.round(x * deviseWindowSize.width/peerDeviseWindowSize.width),
     y: Math.round(y * deviseWindowSize.height/peerDeviseWindowSize.height),
