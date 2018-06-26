@@ -2,7 +2,10 @@
 
 tool.minDistance = 10;
 tool.maxDistance = 45;
-
+var deviseWindowSize = {
+    width: window.innerWidth || document.body.clientWidth,
+    height: window.innerHeight || document.body.clientHeight
+}
 var room = /.*\/([^?]+)/.exec(window.location.pathname)[1];
 
 function pickColor(color) {
@@ -932,4 +935,8 @@ function saveDrawing(){
   var canvas = document.getElementById('myCanvas');
   // Save image to localStorage
   localStorage.setItem("drawingPNG"+room, canvas.toDataURL('image/png'));
+}
+
+function deviseRatioConvertor(){
+
 }
