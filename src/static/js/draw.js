@@ -331,7 +331,7 @@ function onMouseDrag(event) {
 
       send_paths_timer = setInterval(function() {
 
-        socket.emit('draw:progress', room, uid, JSON.stringify(path_to_send));
+        socket.emit('draw:progress', room, uid, JSON.stringify(path_to_send),deviseWindowSize);
         path_to_send.path = new Array();
 
       }, 100);
@@ -394,8 +394,8 @@ function onMouseUp(event) {
     path_to_send.end = event.point;
     // This covers the case where paths are created in less than 100 seconds
     // it does add a duplicate segment, but that is okay for now.
-    socket.emit('draw:progress', room, uid, JSON.stringify(path_to_send));
-    socket.emit('draw:end', room, uid, JSON.stringify(path_to_send));
+    socket.emit('draw:progress', room, uid, JSON.stringify(path_to_send),deviseWindowSize);
+    socket.emit('draw:end', room, uid, JSON.stringify(path_to_send),deviseWindowSize);
 
     // Stop new path data being added & sent
     clearInterval(send_paths_timer);
@@ -740,7 +740,7 @@ socket.on('settings', function(settings) {
 });
 
 
-socket.on('draw:progress', function(artist, data) {
+socket.on('draw:progress', function(artist, data,deviseWindowSize) {
 
   // It wasnt this user who created the event
   if (artist !== uid && data) {
@@ -749,7 +749,7 @@ socket.on('draw:progress', function(artist, data) {
 
 });
 
-socket.on('draw:end', function(artist, data) {
+socket.on('draw:end', function(artist, data,deviseWindowSize) {
 
   // It wasnt this user who created the event
   if (artist !== uid && data) {
