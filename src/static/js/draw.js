@@ -937,6 +937,11 @@ function saveDrawing(){
   localStorage.setItem("drawingPNG"+room, canvas.toDataURL('image/png'));
 }
 
-function deviseRatioConvertor(){
+function deviseRatioConvertor(peerDeviseWindowSize,x,y){
+
+  return {
+    x: x * peerDeviseWindowSize.width/deviseWindowSize.width,
+    y: y * peerDeviseWindowSize.height/deviseWindowSize.height,
+  }
 
 }
