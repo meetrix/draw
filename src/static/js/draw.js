@@ -891,7 +891,8 @@ progress_external_path = function(points, artist,peerDeviseWindowSize) {
     path = external_paths[artist];
 
     // Starts the path
-    var start_point = new Point(points.start[1], points.start[2]);
+      var pointRatio = deviseRatioConvertor(peerDeviseWindowSize,points.start[1],points.start[2])
+    var start_point = new Point(pointRatio.x, pointRatio.y);
     var color = new RgbColor(points.rgba.red, points.rgba.green, points.rgba.blue, points.rgba.opacity);
     if (points.tool == "draw") {
       path.fillColor = color;
@@ -909,9 +910,10 @@ progress_external_path = function(points, artist,peerDeviseWindowSize) {
   var paths = points.path;
   var length = paths.length;
   for (var i = 0; i < length; i++) {
-
-    path.add(new Point(paths[i].top[1], paths[i].top[2]));
-    path.insert(0, new Point(paths[i].bottom[1], paths[i].bottom[2]));
+      pointRatio = deviseRatioConvertor(peerDeviseWindowSize,paths[i].top[1],paths[i].top[2])
+    path.add(new Point(pointRatio.x, pointRatio.y));
+      pointRatio = deviseRatioConvertor(peerDeviseWindowSize,paths[i].bottom[1],paths[i].bottom[2])
+    path.insert(0, new Point(pointRatio.x, pointRatio.y));
 
   }
 
