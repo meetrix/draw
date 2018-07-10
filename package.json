@@ -16,8 +16,11 @@
     "cookie-parser": "^1.4.3",
     "express": "^4.16.2",
     "express-session": "^1.15.6",
+    "jade": "^1.11.0",
     "jsonminify": "^0.4.1",
+    "jws": "^3.1.5",
     "node-gyp-install": "*",
+    "node-jose": "^1.0.0",
     "paper-jsdom": "^0.11.5",
     "socket.io": "^2.0.4",
     "ueberDB": "*"

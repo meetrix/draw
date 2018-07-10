@@ -6,8 +6,10 @@ var settings = require('./src/util/Settings.js'),
     tests = require('./src/util/tests.js'),
     draw = require('./src/util/draw.js'),
     projects = require('./src/util/projects.js'),
+    jade     = require('jade'),
     db = require('./src/util/db.js'),
     express = require("express"),
+    jose = require('node-jose'),
     paper = require('paper'),
     socket = require('socket.io'),
     async = require('async'),
@@ -17,6 +19,8 @@ var settings = require('./src/util/Settings.js'),
     https = require('https'),
     session = require('express-session');
 
+var jwks = require('./jwks.json');
+var app_client_id = '6gg6doqcb4v0aru9qrks24si81';
 /** 
  * SSL Logic and Server bindings
  */ 
@@ -53,8 +57,64 @@ app.use(session({secret: 'secret', key: 'express.sid'}));
 
 // ROUTES
 // Index page
-app.get('/', function(req, res){
-  res.sendfile(__dirname + '/src/static/html/index.html');
+app.get('/', function (req, res, next) {
+    var token = req.query.token;
+    //var token = 'eyJraWQiOiJ5YVwvV0taMTZlTVwvalVjRVJpV0N6dk5DTjI3a2pQWm5lS2ttdUVXRjlcL3ZVPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJhMjcxM2MzOC01ZTRiLTQ5ZTktOWUxNS1hNGUzNDc3NDI5NzUiLCJjdXN0b206bGFzdE5hbWUiOiJkZW1vIiwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLnVzLXdlc3QtMi5hbWF6b25hd3MuY29tXC91cy13ZXN0LTJfd3VxQ3ZLeW1CIiwiY29nbml0bzp1c2VybmFtZSI6InR1dG9yLWRlbW8iLCJhdWQiOiI2Z2c2ZG9xY2I0djBhcnU5cXJrczI0c2k4MSIsImV2ZW50X2lkIjoiMTE0ZjhkOWEtNzljMy0xMWU4LWI5M2EtNzkyMDJlMmY1YWYwIiwiY3VzdG9tOmZpcnN0TmFtZSI6InR1dG9yIiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE1MzAwNzM5MzUsImN1c3RvbTptYWluUm9sZSI6ImNvbnN1bHRhbnQiLCJjdXN0b206c3ViUm9sZSI6InRlYWNoZXIiLCJjdXN0b206dGVuYW50IjoidHV0b3BpeWEiLCJwaG9uZV9udW1iZXIiOiIrOTQ3MTExMzUwMTIiLCJleHAiOjE1MzAxMjE3NjEsImlhdCI6MTUzMDExODE2MSwiZW1haWwiOiJzdXB1bi4xMkBjc2UubXJ0LmFjLmxrIn0.i--6vnwMm0H693FWyQT7YjR8NtKHIpPi5yIHZqNm_CXv1xekjUMBLKcEnuWhA3DTzLT2W9kaaD2w_xyQEPen_MbUE6WXEd6wX1AeafmnylKQL9U-iuNe1ykVk_ysukca5RLTN7EIn8ZOYMh8rCX2K2qNtaAwmeu0U92UN49M_X7fF0vhkwJvrQxBs_gXymU7wCF5uUVGA5kRrbcSs1bgipSgpkKET9HPRMRwXawHEJyIbuUKSYRRuj8ZYPuZxUlbplYCxsSsWgqZgxncyJJmpSgFzC6lATegLbYRBO9Ze2ksRu6nTOSy9KhozRnxUBTUFzc6xMy_UCOpoa58ffEjcA'
+    console.log('token', token);
+    var sections = token.split('.');
+    // get the kid from the headers prior to verification
+    var header = jose.util.base64url.decode(sections[0]);
+    header = JSON.parse(header);
+    var kid = header.kid;
+    var keys = jwks['keys'];
+    // search for the kid in the downloaded public keys
+    var key_index = -1;
+    for (var i=0; i < keys.length; i++) {
+        if (kid == keys[i].kid) {
+            key_index = i;
+            break;
+        }
+    }
+    if (key_index == -1) {
+        console.log('Public key not found in jwks.json');
+        res.send('Public key not found in jwks.json');
+    }
+    // construct the public key
+    jose.JWK.asKey(keys[key_index]).
+    then(function(result) {
+        // verify the signature
+        jose.JWS.createVerify(result).
+        verify(token).
+        then(function(result) {
+            // now we can use the claims
+
+
+            var claims = JSON.parse(result.payload);
+
+            var response = {
+                "statusCode": 200,
+                headers: { 'Content-Type': 'application/json' },
+                "body": JSON.stringify(claims)
+            };
+            console.log(claims)
+            // additionally we can verify the token expiration
+            var current_ts = Math.floor(new Date() / 1000);
+            if (current_ts > claims.exp) {
+                res.send('Token is expired');
+            }
+            // and the Audience (use claims.client_id if verifying an access token)
+            if (claims.aud != app_client_id) {
+                res.send('Token was not issued for this audience');
+            }
+            next();
+        }).
+        catch(function() {
+            res.send('Signature verification failed');
+        });
+    });
+
+}, function(req, res){
+  res.sendfile(__dirname + '/src/build/index.html');
 });
 
 // Drawings
@@ -77,7 +137,7 @@ app.get('/tests/frontend', function (req, res) {
 // Static files IE Javascript and CSS
 app.use("/static", express.static(__dirname + '/src/static'));
 
-
+app.use(express.static(__dirname + '/src/build/'));
 
 
 // LISTEN FOR REQUESTS

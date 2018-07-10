@@ -2,4 +2,5 @@ node_modules/*
 settings.json
 npm-debug.log
 .idea/*
+jwks.json
 *~
