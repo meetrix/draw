@@ -7,6 +7,10 @@ var deviseWindowSize = {
     width: canvas.width,
     height:canvas.height
 }
+var commonCanvasWindow = {
+  width : 1400,
+  height: 900,
+}
 // var deviseWindowSize = {
 //     width: window.innerWidth || document.body.clientWidth,
 //     height: window.innerHeight || document.body.clientHeight
@@ -313,12 +317,25 @@ function onMouseDrag(event) {
   if (activeTool == "draw" || activeTool == "pencil") {
     var step = event.delta / 2;
     step.angle += 90;
+
+    //convert common canvas convortor
+    var middle = event.middlePoint;
+    var convertXY = convertDeviseToCommonXY(event.middlePoint.x,event.middlePoint.y);
+    middle.x = convertXY.x;
+    middle.y = convertXY.y;
+    console.log('middle',middle);
+    console.log('convertXY',convertXY);
+
     if (activeTool == "draw") {
       var top = event.middlePoint + step;
       var bottom = event.middlePoint - step;
+      var topCon = middle + step;
+      var bottomCon = middle - step;
     } else if (activeTool == "pencil") {
       var top = event.middlePoint;
       bottom = event.middlePoint;
+        var topCon = middle;
+        bottomCon = middle;
     }
     path.add(top);
     path.insert(0, bottom);
@@ -327,15 +344,15 @@ function onMouseDrag(event) {
 
     // Add data to path
     path_to_send.path.push({
-      top: top,
-      bottom: bottom
+      top: topCon,
+      bottom: bottomCon
     });
 
     // Send paths every 100ms
     if (!timer_is_active) {
 
       send_paths_timer = setInterval(function() {
-
+        console.log('JSON.stringify(path_to_send)',JSON.stringify(path_to_send))
         socket.emit('draw:progress', room, uid, JSON.stringify(path_to_send),deviseWindowSize);
         path_to_send.path = new Array();
 
@@ -896,7 +913,9 @@ progress_external_path = function(points, artist,peerDeviseWindowSize) {
     path = external_paths[artist];
 
     // Starts the path
-      var pointRatio = deviseRatioConvertor(peerDeviseWindowSize,points.start[1],points.start[2])
+    //var pointRatio = deviseRatioConvertor(peerDeviseWindowSize,points.start[1],points.start[2]);
+      var pointRatio = convertCommonToDeviseXY(points.start[1],points.start[2]);
+    console.log('points',points)
     var start_point = new Point(pointRatio.x, pointRatio.y);
     var color = new RgbColor(points.rgba.red, points.rgba.green, points.rgba.blue, points.rgba.opacity);
     if (points.tool == "draw") {
@@ -915,9 +934,11 @@ progress_external_path = function(points, artist,peerDeviseWindowSize) {
   var paths = points.path;
   var length = paths.length;
   for (var i = 0; i < length; i++) {
-      pointRatio = deviseRatioConvertor(peerDeviseWindowSize,paths[i].top[1],paths[i].top[2])
+     // pointRatio = deviseRatioConvertor(peerDeviseWindowSize,paths[i].top[1],paths[i].top[2])
+      pointRatio = convertCommonToDeviseXY(paths[i].top[1],paths[i].top[2])
     path.add(new Point(pointRatio.x, pointRatio.y));
-      pointRatio = deviseRatioConvertor(peerDeviseWindowSize,paths[i].bottom[1],paths[i].bottom[2])
+      //pointRatio = deviseRatioConvertor(peerDeviseWindowSize,paths[i].bottom[1],paths[i].bottom[2])
+      pointRatio = convertCommonToDeviseXY(paths[i].bottom[1],paths[i].bottom[2])
     path.insert(0, new Point(pointRatio.x, pointRatio.y));
 
   }
@@ -957,5 +978,22 @@ function deviseRatioConvertor(peerDeviseWindowSize,x,y){
     x: Math.round(x * deviseWindowSize.width/peerDeviseWindowSize.width),
     y: Math.round(y * deviseWindowSize.height/peerDeviseWindowSize.height),
   }
+
+}
+
+function convertDeviseToCommonXY(x,y){
+
+    return {
+        x: Math.round(x * commonCanvasWindow.width/deviseWindowSize.width),
+        y: Math.round(y * commonCanvasWindow.height/deviseWindowSize.height),
+    }
+
+}
+function convertCommonToDeviseXY(x,y){
+
+    return {
+        x: Math.round(x * deviseWindowSize.width/commonCanvasWindow.width),
+        y: Math.round(y * deviseWindowSize.height/commonCanvasWindow.height),
+    }
 
 }
