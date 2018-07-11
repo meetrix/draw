@@ -5,17 +5,20 @@ var db = require('./db.js');
 projects = projects.projects;
 
 // Create an in memory paper canvas
-var drawing = paper.setup(new paper.Canvas(1920, 1080));
-
+//var drawing = paper.setup(new paper.Canvas(1920, 1080));
+var drawing = paper.setup(new paper.Canvas(1400, 900));
 // Continues to draw a path in real time
 exports.progressExternalPath = function (room, points, artist) {
+
   var project = projects[room].project;
-  project.activate();
-  var path = projects[room].external_paths[artist];
+    project.activate();
+
+    var path = projects[room].external_paths[artist];
 
   // The path hasn't already been started
   // So start it
   if (!path) {
+
     projects[room].external_paths[artist] = new drawing.Path();
     path = projects[room].external_paths[artist];
 
@@ -48,6 +51,7 @@ exports.progressExternalPath = function (room, points, artist) {
 };
 
 exports.endExternalPath = function (room, points, artist) {
+
   var project = projects[room].project;
   project.activate();
   var path = projects[room].external_paths[artist];
@@ -60,6 +64,7 @@ exports.endExternalPath = function (room, points, artist) {
     // Remove the old data
     projects[room].external_paths[artist] = false;
   }
+
   db.storeProject(room);
 };
 

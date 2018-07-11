@@ -156,6 +156,7 @@ io.sockets.on('connection', function (socket) {
   // EVENT: User stops drawing something
   // Having room as a parameter is not good for secure rooms
   socket.on('draw:progress', function (room, uid, co_ordinates,deviseWindowSize) {
+
     if (!projects.projects[room] || !projects.projects[room].project) {
       loadError(socket);
       return;
@@ -236,7 +237,9 @@ function subscribe(socket, data) {
   socket.emit('settings', clientSettings);
 
   // Create Paperjs instance for this room if it doesn't exist
+
   var project = projects.projects[room];
+
   if (!project) {
     console.log("made room");
     projects.projects[room] = {};
@@ -246,6 +249,7 @@ function subscribe(socket, data) {
     // object but that just helps it "draw" stuff to the invisible server
     // canvas.
     projects.projects[room].project = new paper.Project();
+
     projects.projects[room].external_paths = {};
     db.load(room, socket);
   } else { // Project exists in memory, no need to load from database

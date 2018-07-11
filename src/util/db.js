@@ -16,13 +16,12 @@ db.init(function(err){
 exports.storeProject = function(room) {
   var project = projects.projects[room].project;
   var json = project.exportJSON();
-  console.log("Writing project to database");
   db.set(room, {project: json});
 }
 
 // Try to load room from database
 exports.load = function(room, socket) {
-  console.log("load from db");
+
   if (projects.projects[room] && projects.projects[room].project) {
     var project = projects.projects[room].project;
     db.get(room, function(err, value) {
