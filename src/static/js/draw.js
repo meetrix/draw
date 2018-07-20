@@ -1,5 +1,5 @@
 // Please refactor me, this is mostly a complete car crash with globals everywhere.
-
+//var path;
 tool.minDistance = 10;
 tool.maxDistance = 45;
 
@@ -418,6 +418,7 @@ function onMouseUp(event) {
   }
 
 }
+
 
 var key_move_delta;
 var send_key_move_timer;
@@ -932,4 +933,12 @@ function saveDrawing(){
   var canvas = document.getElementById('myCanvas');
   // Save image to localStorage
   localStorage.setItem("drawingPNG"+room, canvas.toDataURL('image/png'));
+}
+
+function onResize(event) {
+    // Whenever the window is resized, recenter the path:
+    console.log('resize',event)
+    view.scal
+    console.log('paper.project',view.matrix)
+
 }
