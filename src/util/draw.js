@@ -3,24 +3,31 @@ var projects = require('./projects.js');
 var db = require('./db.js');
 
 projects = projects.projects;
-
+var canvasSize = {
+  width:1400,
+  height:900
+}
 // Create an in memory paper canvas
-var drawing = paper.setup(new paper.Canvas(1920, 1080));
+ var drawing = paper.setup(new paper.Canvas(canvasSize.width, canvasSize.height));
 
 // Continues to draw a path in real time
-exports.progressExternalPath = function (room, points, artist) {
+exports.progressExternalPath = function (room, points, artist,deviseWindowSize) {
+  console.log('deviseWindowSize',deviseWindowSize)
   var project = projects[room].project;
   project.activate();
   var path = projects[room].external_paths[artist];
-
+  // var drawing = paper.setup(new paper.Canvas(deviseWindowSize.width, deviseWindowSize.height));
   // The path hasn't already been started
   // So start it
   if (!path) {
+
     projects[room].external_paths[artist] = new drawing.Path();
     path = projects[room].external_paths[artist];
 
     // Starts the path
-    var start_point = new drawing.Point(points.start[1], points.start[2]);
+      var startPoint = devisePointConvert(deviseWindowSize,points.start[1], points.start[2])
+    //var start_point = new drawing.Point(points.start[1], points.start[2]);
+      var start_point = new drawing.Point(startPoint.x, startPoint.y);
     var color = new drawing.Color(points.rgba.red, points.rgba.green, points.rgba.blue, points.rgba.opacity);
     if(points.tool == "draw") {
       path.fillColor = color;
@@ -39,21 +46,28 @@ exports.progressExternalPath = function (room, points, artist) {
   var paths = points.path;
   var length = paths.length;
   for (var i = 0; i < length; i++) {
-    path.add(new drawing.Point(paths[i].top[1], paths[i].top[2]));
-    path.insert(0, new drawing.Point(paths[i].bottom[1], paths[i].bottom[2]));
+    var topPoint = devisePointConvert(deviseWindowSize,paths[i].top[1], paths[i].top[2])
+      var bottomPoint = devisePointConvert(deviseWindowSize,paths[i].bottom[1], paths[i].bottom[2])
+    // path.add(new drawing.Point(paths[i].top[1], paths[i].top[2]));
+    // path.insert(0, new drawing.Point(paths[i].bottom[1], paths[i].bottom[2]));
+      path.add(new drawing.Point(topPoint.x, topPoint.y));
+      path.insert(0, new drawing.Point(bottomPoint.x, bottomPoint.y));
   }
 
   path.smooth();
   project.view.draw();
 };
 
-exports.endExternalPath = function (room, points, artist) {
+exports.endExternalPath = function (room, points, artist,deviseWindowSize) {
   var project = projects[room].project;
   project.activate();
   var path = projects[room].external_paths[artist];
+  //var drawing = paper.setup(new paper.Canvas(deviseWindowSize.width, deviseWindowSize.height));
+  console.log('drawing',drawing);
   if (path) {
     // Close the path
-    path.add(new drawing.Point(points.end[1], points.end[2]));
+      var endPoints = devisePointConvert(deviseWindowSize,points.end[1], points.end[2])
+    path.add(new drawing.Point(endPoints.x, endPoints.y));
     path.closed = true;
     path.smooth();
     project.view.draw();
@@ -135,4 +149,13 @@ exports.addImage = function(room, artist, data, position, name) {
     raster.name = name;
     db.storeProject(room);
   }
+}
+
+function devisePointConvert(deviseWindow,x,y){
+
+    return {
+        x: Math.round(x * canvasSize.width/deviseWindow.width),
+        y: Math.round(y * canvasSize.height/deviseWindow.height),
+    }
+
 }

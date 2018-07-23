@@ -161,7 +161,7 @@ io.sockets.on('connection', function (socket) {
       return;
     }
     io.in(room).emit('draw:progress', uid, co_ordinates,deviseWindowSize);
-    draw.progressExternalPath(room, JSON.parse(co_ordinates), uid);
+    draw.progressExternalPath(room, JSON.parse(co_ordinates), uid,deviseWindowSize);
   });
 
   // EVENT: User stops drawing something
@@ -172,7 +172,7 @@ io.sockets.on('connection', function (socket) {
       return;
     }
     io.in(room).emit('draw:end', uid, co_ordinates,deviseWindowSize);
-    draw.endExternalPath(room, JSON.parse(co_ordinates), uid);
+    draw.endExternalPath(room, JSON.parse(co_ordinates), uid,deviseWindowSize);
   });
 
   // User joins a room
@@ -273,5 +273,21 @@ function loadFromMemory(room, socket) {
 
 function loadError(socket) {
   socket.emit('project:load:error');
+}
+function convertDeviseToCommonXY(x,y){
+
+    return {
+        x: Math.round(x * commonCanvasWindow.width/deviseWindowSize.width),
+        y: Math.round(y * commonCanvasWindow.height/deviseWindowSize.height),
+    }
+
+}
+function convertCommonToDeviseXY(x,y){
+
+    return {
+        x: Math.round(x * deviseWindowSize.width/commonCanvasWindow.width),
+        y: Math.round(y * deviseWindowSize.height/commonCanvasWindow.height),
+    }
+
 }
 

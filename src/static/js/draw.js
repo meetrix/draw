@@ -776,7 +776,8 @@ socket.on('project:load', function(json) {
   console.log("project:load");
   paper.project.activeLayer.remove();
   paper.project.importJSON(json.project);
-
+    paper.project.activeLayer.scale(deviseWindowSize.width/1400,new paper.Point(0, 0))
+  console.log('saca',paper.project)
   // Make color selector draggable
   $('#mycolorpicker').pep({});
   // Make sure the range event doesn't propogate to pep
