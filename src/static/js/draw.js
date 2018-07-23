@@ -7,6 +7,13 @@ var deviseWindowSize = {
     width: canvas.width,
     height:canvas.height
 }
+var eraserActiveColor  = {
+    "red":  255,
+    "green": 255,
+    "blue": 255,
+    "opacity": 1
+}
+var whiteColorRgb = new RgbColor(255, 255, 255, 1);
 // var deviseWindowSize = {
 //     width: window.innerWidth || document.body.clientWidth,
 //     height: window.innerHeight || document.body.clientHeight
@@ -258,7 +265,7 @@ function onMouseDown(event) {
       }
     }
   }, 100);
-
+  console.log('activeTool',activeTool);
   if (activeTool == "draw" || activeTool == "pencil") {
     var point = event.point;
     path = new Path();
@@ -280,7 +287,27 @@ function onMouseDown(event) {
       path: [],
       tool: activeTool
     };
-  } else if (activeTool == "select") {
+  }
+  else if (activeTool == "eraser") {
+      var point = event.point;
+      path = new Path();
+      active_color_rgb = whiteColorRgb;
+      path.fillColor = active_color_rgb
+
+      path.add(event.point);
+      path.name = uid + ":" + (++paper_object_count);
+      view.draw();
+
+      // The data we will send every 100ms on mouse drag
+      path_to_send = {
+          name: path.name,
+          rgba: eraserActiveColor,
+          start: event.point,
+          path: [],
+          tool: activeTool
+      };
+  }
+  else if (activeTool == "select") {
     // Select item
     $("#myCanvas").css("cursor", "pointer");
     if (event.item) {
@@ -344,7 +371,39 @@ function onMouseDrag(event) {
     }
 
     timer_is_active = true;
-  } else if (activeTool == "select") {
+  }
+  else  if (activeTool == "eraser" ) {
+        var step = event.delta / 2;
+        step.angle += 90;
+        var top = event.middlePoint + step;
+        var bottom = event.middlePoint - step;
+        console.log('top',top);
+        path.add(top);
+        path.insert(0, bottom);
+        path.smooth();
+        view.draw();
+
+        // Add data to path
+        path_to_send.path.push({
+            top: top,
+            bottom: bottom
+        });
+
+        // Send paths every 100ms
+        if (!timer_is_active) {
+
+            send_paths_timer = setInterval(function() {
+
+                socket.emit('draw:progress', room, uid, JSON.stringify(path_to_send),deviseWindowSize);
+                path_to_send.path = new Array();
+
+            }, 100);
+
+        }
+
+        timer_is_active = true;
+    }
+  else if (activeTool == "select") {
     // Move item locally
     for (x in paper.project.selectedItems) {
       var item = paper.project.selectedItems[x];
@@ -424,6 +483,7 @@ function onMouseUp(event) {
     item_move_delta = null;
     item_move_timer_is_active = false;
   }
+
 
 }
 
@@ -607,6 +667,17 @@ $('#pencilTool').on('click', function() {
   activeTool = "pencil";
   $('#myCanvas').css('cursor', 'pointer');
   paper.project.activeLayer.selected = false;
+});
+$('#eraserTool').on('click', function() {
+    $('#editbar > ul > li > a').css({
+        background: ""
+    }); // remove the backgrounds from other buttons
+    $('#eraserTool > a').css({
+        background: "#eee"
+    }); // set the selecttool css to show it as active
+    activeTool = "eraser";
+    $('#myCanvas').css('cursor', 'pointer');
+    paper.project.activeLayer.selected = false;
 });
 $('#drawTool').on('click', function() {
   $('#editbar > ul > li > a').css({
@@ -902,7 +973,11 @@ progress_external_path = function(points, artist,peerDeviseWindowSize) {
     var color = new RgbColor(points.rgba.red, points.rgba.green, points.rgba.blue, points.rgba.opacity);
     if (points.tool == "draw") {
       path.fillColor = color;
-    } else if (points.tool == "pencil") {
+    }
+      else if (points.tool == "eraser") {
+          path.fillColor = color;
+      }
+    else if (points.tool == "pencil") {
       path.strokeColor = color;
       path.strokeWidth = 2;
     }
