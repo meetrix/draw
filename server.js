@@ -30,8 +30,9 @@ if(settings.ssl){
   console.log("SSL Cert Auth File" + settings.ssl.cert);
 
   var options = {
-    key: fs.readFileSync(settings.ssl.key),
-    cert: fs.readFileSync(settings.ssl.cert)
+    key: fs.readFileSync(settings.ssl.key,'utf8'),
+    cert: fs.readFileSync(settings.ssl.cert,'utf8'),
+      passphrase: '1234'
   };
   var app = express(options);
   var server = https.createServer(options, app).listen(settings.port);
@@ -144,7 +145,7 @@ app.use(express.static(__dirname + '/src/build/'));
 var io = socket.listen(server);
 io.sockets.setMaxListeners(0);
 
-console.log("Access Etherdraw at http://"+settings.ip+":"+settings.port);
+console.log("Access Etherdraw at https://"+settings.ip+":"+settings.port);
 
 // SOCKET IO
 io.sockets.on('connection', function (socket) {
