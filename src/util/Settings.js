@@ -19,11 +19,11 @@ exports.defaults = {
   "dbSettings" : {
                    "filename" : "var/dirty.db"
                  },
-  "ssl": {
-    key:'ssl/key.pem',
-    cert:'ssl/cert.pem',
-      passphrase: '1234'
-  },
+  // "ssl": {
+  //   key:'ssl/key.pem',
+  //   cert:'ssl/cert.pem',
+  //     passphrase: '1234'
+  // },
   "tool": "brush",
 };
 

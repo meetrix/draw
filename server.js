@@ -145,7 +145,7 @@ app.use(express.static(__dirname + '/src/build/'));
 var io = socket.listen(server);
 io.sockets.setMaxListeners(0);
 
-console.log("Access Etherdraw at https://"+settings.ip+":"+settings.port);
+console.log("Access Etherdraw at http://"+settings.ip+":"+settings.port);
 
 // SOCKET IO
 io.sockets.on('connection', function (socket) {
