@@ -242,6 +242,33 @@
                 canvas.setAttribute('display','block')
                 canvas.setAttribute('margin','auto')
             }
+            function remainsize(){
+                var scale = {x: 14, y: 9};
+                var deviseWindowSize = {
+                    width: window.innerWidth || document.body.clientWidth,
+                    height: window.innerHeight || document.body.clientHeight
+                }
+                if((deviseWindowSize.height /deviseWindowSize.width) < (scale.y/scale.x)){
+                    console.log('else')
+                    console.log(deviseWindowSize.height /deviseWindowSize.width)
+                    var canvasWidth = canvas.height * 14/9 -10
+                    return {
+                        rWidth: deviseWindowSize.width - canvasWidth,
+                        rHeight: deviseWindowSize.height
+                    }
+
+
+                }
+                else if ((deviseWindowSize.height /deviseWindowSize.width) > (scale.y/scale.x)){
+                    console.log('else if')
+                    console.log(deviseWindowSize.height /deviseWindowSize.width)
+                    var canvasHeight = canvas.width * 9/14 -10
+                    return {
+                        rWidth: deviseWindowSize.width,
+                        rHeight: deviseWindowSize.height - canvasHeight
+                    }
+                }
+            }
 
 
         </script>

@@ -30,8 +30,9 @@ if(settings.ssl){
   console.log("SSL Cert Auth File" + settings.ssl.cert);
 
   var options = {
-    key: fs.readFileSync(settings.ssl.key),
-    cert: fs.readFileSync(settings.ssl.cert)
+    key: fs.readFileSync(settings.ssl.key,'utf8'),
+    cert: fs.readFileSync(settings.ssl.cert,'utf8'),
+      passphrase: '1234'
   };
   var app = express(options);
   var server = https.createServer(options, app).listen(settings.port);
