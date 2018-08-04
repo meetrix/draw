@@ -4,6 +4,7 @@
     <title>EtherDraw</title>
     <link rel='stylesheet' href='../static/css/style.css'>
     <link rel='stylesheet' href='../static/css/farbtastic.css'>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
     <script>
         /*
         |@licstart  The following is the entire license notice for the
@@ -41,7 +42,7 @@
     <script src='../static/js/draw.js' type="text/paperscript" canvas="myCanvas"></script>
     <script>document.domain = document.domain;</script>
 </head>
-<body style="background-color: #41788c">
+<body style="background-color: #555555">
 <div id="editbar" class="toolbar">
     <div id="overlay">
         <div id="overlay-inner"></div>
@@ -49,60 +50,69 @@
     <ul class="menu_left">
         <!-- paint brush -->
         <li class="acl-write" id="drawTool" data-key="draw">
-            <a class="grouped-left" data-l10n-id="draw.toolbar.draw.title">
-                <span class="buttonicon buttonicon-draw"></span>
+            <a class="grouped-left" data-l10n-id="draw.toolbar.draw.title" title="Brush">
+                <i class="fas fa-paint-brush fa-lg"></i>
+                <!-- <span class="buttonicon buttonicon-draw"></span> -->
             </a>
         </li>
         <!-- pencil brush -->
         <li class="acl-write" id="pencilTool" data-key="pencil">
-            <a class="grouped-middle" data-l10n-id="draw.toolbar.pencil.title">
-                <span class="buttonicon buttonicon-pencil"></span>
+            <a class="grouped-middle" data-l10n-id="draw.toolbar.pencil.title"  title="Pencil">
+                <i class="fas fa-pencil-alt fa-lg"></i>
+                <!-- <span class="buttonicon buttonicon-pencil"></span> -->
             </a>
         </li>
         <!-- pencil brush -->
         <li class="acl-write" id="eraserTool" data-key="eraser">
-            <a class="grouped-middle" data-l10n-id="draw.toolbar.eraser.title">
-                <span class="buttonicon buttonicon-eraser"></span>
+            <a class="grouped-middle" data-l10n-id="draw.toolbar.eraser.title"  title="Eraser">
+                <!-- <span class="buttonicon buttonicon-eraser"></span> -->
+                <i class="fas fa-eraser fa-lg"></i>
             </a>
         </li>
         <!-- Select Tool -->
         <li class="acl-write" id="selectTool" data-key="select">
-            <a class="grouped-middle" data-l10n-id="draw.toolbar.select.title">
-                <span class="buttonicon buttonicon-select"></span>
+            <a class="grouped-middle" data-l10n-id="draw.toolbar.select.title" title="Move">
+                <!-- <span class="buttonicon buttonicon-select"></span> -->
+                <i class="fas fa-arrows-alt fa-lg"></i>
             </a>
         </li>
 
         <!-- color Selector Toggle -->
         <li class="acl-write" id="colorToggle" data-key="color">
-            <a class="grouped-middle" data-l10n-id="draw.toolbar.colorToggle.title">
-                    <span class="buttonicon buttonicon-color" style="opacity:0.5">
-                      <div style="display:inline-block;width:5px; height:16px; background-color:red;margin:0;padding:0;float:left"></div>
-                      <div style="display:inline-block;width:5px; height:16px; background-color:blue;margin:0;padding:0;float:left"></div>
-                      <div style="display:inline-block;width:5px; height:16px; background-color:green;margin:0;padding:0;float:left"></div>
-                    </span>
+            <a class="grouped-middle" data-l10n-id="draw.toolbar.colorToggle.title" title="Change the Color">
+                <i class="fas fa-palette fa-lg"></i>
+                <!-- <span class="buttonicon buttonicon-color" style="opacity:0.5">
+                    <div style="display:inline-block;width:5px; height:16px; background-color:red;margin:0;padding:0;float:left"></div>
+                    <div style="display:inline-block;width:5px; height:16px; background-color:blue;margin:0;padding:0;float:left"></div>
+                    <div style="display:inline-block;width:5px; height:16px; background-color:green;margin:0;padding:0;float:left"></div>
+                </span> -->
             </a>
         </li>
 
         <li class="acl-write" id="clearImage" data-key="clear">
             <a class="grouped-right" data-l10n-id="draw.toolbar.clearImage" class="clearCanvasPrompt"
                title="Clear Drawing">
-                <span class="buttonicon buttonicon-clearImage"
-                      style="background-color:transparent;background-image:none;border:dotted 1px black;margin:0;color:#000;height:14px;line-height:14px">X</span>
+                <!-- <span class="buttonicon buttonicon-clearImage"
+                    style="background-color:transparent;background-image:none;border:dotted 1px black;margin:0;color:#000;height:14px;line-height:14px">X
+                </span> -->
+                <i class="fas fa-chalkboard fa-lg"></i>
             </a>
         </li>
 
         <li class="acl-write" id="toggleBackground" data-key="clear">
             <a class="grouped-left" data-l10n-id="draw.toolbar.toggleBackground" class="toggleBackground"
                title="Toggle Transparent Background">
-                    <span class="buttonicon buttonicon-toggleBackground"
-                          style="background-color:#fff;background-image:none;border:solid 1px black;margin:0;height:14px">
+                <!-- <span class="buttonicon buttonicon-toggleBackground"
+                style="background-color:#fff;background-image:none;border:solid 1px black;margin:0;height:14px"> -->
+                <i class="fas fa-toggle-off fa-lg"></i>
             </a>
         </li>
 
         <!-- Upload -->
         <li class="acl-write" id="uploadImage" data-key="upload">
             <a class="grouped-right" data-l10n-id="draw.toolbar.upload.title" title="Upload an Image">
-                <span class="buttonicon buttonicon-upload"></span>
+                <!-- <span class="buttonicon buttonicon-upload"></span> -->
+                <i class="fas fa-upload fa-lg"></i>
             </a>
         </li>
     </ul>
@@ -225,7 +235,7 @@
 
     function resize(canvas) {
         var scale = {x: 14, y: 9};
-        var style = "border:1px solid red;background-color: #FFFFFF";
+        var style = "border:1px solid #41788c;background-color: #FFFFFF";
         var deviseWindowSize = {
             width: window.innerWidth || document.body.clientWidth,
             height: window.innerHeight || document.body.clientHeight
