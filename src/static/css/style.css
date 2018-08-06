@@ -12,7 +12,11 @@ html {
 }
 
 body {
-    font-family: Helvetica, Arial, sans-serif
+    font-family: Helvetica, Arial, sans-serif;
+    overflow: hidden;
+    display: block;
+    background-color: #41788c;
+    /* position: fixed; */
 }
 
 .toolbar {
@@ -28,7 +32,7 @@ body {
     width: 100%;
     white-space: nowrap;
     height: 32px;
-    position: absolute;
+    position: fixed;
     left: 0px;
     right: 0px;
     -webkit-touch-callout: none;
@@ -374,7 +378,7 @@ input[type=checkbox] {
 }
 
 #canvasContainer {
-    position: absolute;
+    position: fixed;
     top: 37px;
     left: 0px;
     right: 0px;
