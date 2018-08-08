@@ -9,14 +9,14 @@ p {
 html {
     font-size: 62.5%;
     width: 100%;
+    position: fixed;
 }
 
 body {
     font-family: Helvetica, Arial, sans-serif;
-    overflow: hidden;
-    display: block;
+    overflow: visible;
+    position: fixed;
     background-color: #41788c;
-    /* position: fixed; */
 }
 
 .toolbar {
@@ -384,6 +384,7 @@ input[type=checkbox] {
     right: 0px;
     bottom: 0px;
     overflow: hidden;
+    background-color: #41788c;
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-position: 0px 37px;
@@ -531,14 +532,14 @@ input[type=checkbox] {
     cursor: move;
 }
 
-#myCanvas {
+/* #myCanvas { */
     /*position: absolute;*/
     /*cursor: hand;*/
     /*top: 0px;*/
     /*left: 0px;*/
     /*right: 0px;*/
     /*bottom: 0px;*/
-}
+/* } */
 
 .whiteBG {
     background-color: #fff;
